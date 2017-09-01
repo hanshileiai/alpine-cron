@@ -1,0 +1,26 @@
+version: "2"
+services: 
+
+  alpine_cron:
+    # image: alpine:latest
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ./crontabs:/crontabs
+      - ./entry.sh:/entry.sh
+      - ./logs:/var/log
+      # - /etc/localtime:/etc/localtime:ro
+      - /usr/share/zoneinfo:/usr/share/zoneinfo
+      # docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    privileged: true
+    environment:
+      TZ: "Asia/Shanghai"
+    command: >
+      sh -c "
+        echo /usr/share/zoneinfo/$TZ > /etc/localtime && 
+        chmod 755 /entry.sh && 
+        /usr/bin/crontab /crontabs && 
+        /usr/sbin/crond -f -L 8 "
+    restart: always

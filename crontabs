@@ -1,0 +1,2 @@
+# test
+* * * * * /bin/date > /var/log/date.log 2>&1 
